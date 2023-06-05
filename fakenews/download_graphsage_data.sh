@@ -3,18 +3,18 @@
 cd produced_data
 
 
-echo Connecting to the server
-scp  -T astroturfer@10.100.54.29:"/home/astroturfer/astroturfing/fakenews/produced_data/graphsage_dataset0.tar.gz \
-                                  /home/astroturfer/astroturfing/fakenews/produced_data/graphsage_dataset1.tar.gz \
-				  /home/astroturfer/astroturfing/fakenews/produced_data/graphsage_dataset2.tar.gz \
-				  /home/astroturfer/astroturfing/fakenews/produced_data/graphsage_dataset3.tar.gz \
-				  /home/astroturfer/astroturfing/fakenews/produced_data/graphsage_dataset4.tar.gz \
-				  /home/astroturfer/astroturfing/fakenews/produced_data/graphsage_dataset5.tar.gz \
-				  /home/astroturfer/astroturfing/fakenews/produced_data/graphsage_dataset6.tar.gz \
-				  /home/astroturfer/astroturfing/fakenews/produced_data/graphsage_dataset7.tar.gz \
-				  /home/astroturfer/astroturfing/fakenews/produced_data/graphsage_dataset8.tar.gz \
-				  /home/astroturfer/astroturfing/fakenews/produced_data/graphsage_dataset9.tar.gz \
-				  /home/astroturfer/astroturfing/fakenews/produced_data/user_labels.tar.gz" . 
+# echo Connecting to the server
+# scp  -T astroturfer@10.100.54.29:"/home/astroturfer/astroturfing/fakenews/produced_data/graphsage_dataset0.tar.gz \
+#                                   /home/astroturfer/astroturfing/fakenews/produced_data/graphsage_dataset1.tar.gz \
+# 				  /home/astroturfer/astroturfing/fakenews/produced_data/graphsage_dataset2.tar.gz \
+# 				  /home/astroturfer/astroturfing/fakenews/produced_data/graphsage_dataset3.tar.gz \
+# 				  /home/astroturfer/astroturfing/fakenews/produced_data/graphsage_dataset4.tar.gz \
+# 				  /home/astroturfer/astroturfing/fakenews/produced_data/graphsage_dataset5.tar.gz \
+# 				  /home/astroturfer/astroturfing/fakenews/produced_data/graphsage_dataset6.tar.gz \
+# 				  /home/astroturfer/astroturfing/fakenews/produced_data/graphsage_dataset7.tar.gz \
+# 				  /home/astroturfer/astroturfing/fakenews/produced_data/graphsage_dataset8.tar.gz \
+# 				  /home/astroturfer/astroturfing/fakenews/produced_data/graphsage_dataset9.tar.gz \
+# 				  /home/astroturfer/astroturfing/fakenews/produced_data/user_labels.tar.gz" . 
 								  
 
 echo Uncompressing user_labels file

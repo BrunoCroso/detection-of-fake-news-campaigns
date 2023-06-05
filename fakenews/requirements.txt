@@ -40,7 +40,7 @@ rsa==4.6
 scikit-learn==0.23.2
 scipy==1.5.4
 six==1.15.0
-smart-open==4.0.1
+smart-open==5.1.0
 stellargraph==1.2.1
 tensorboard==2.4.0
 tensorboard-plugin-wit==1.7.0

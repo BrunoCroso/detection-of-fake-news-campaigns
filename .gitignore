@@ -12,3 +12,4 @@ missing_user_profiles/
 __pycache__
 tweets1/
 trees2/
+.DS_store
