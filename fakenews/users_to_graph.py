@@ -143,7 +143,11 @@ def build_initial_graph(node_ids):
         pbar.set_description('File: %s'%(fentry.path))
         if fentry.path.endswith(".json") and fentry.is_file():
             with open(fentry.path) as json_file:
-                user_followers = json.load(json_file)
+                try:
+                    user_followers = json.load(json_file)
+                
+                except:
+                    continue
 
                 if not str(user_followers["user_id"]) in node_ids:
                     continue

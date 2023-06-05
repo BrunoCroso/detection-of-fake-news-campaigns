@@ -119,9 +119,12 @@ def load_user_from_disk(user_id):
 
     # load user followers from file
     with open("{}/{}.json".format(USER_FOLLOWERS_PATH, user_id)) as json_file:
-        followers_dict = json.load(json_file)
-        for follower_id in followers_dict.get("followers", []):
-            user.followers.add(str(follower_id))
+        try:
+            followers_dict = json.load(json_file)
+            for follower_id in followers_dict.get("followers", []):
+                user.followers.add(str(follower_id))
+        except:
+            pass
 
     return user
 
