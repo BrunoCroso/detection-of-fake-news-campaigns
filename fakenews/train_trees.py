@@ -234,16 +234,16 @@ if __name__ == "__main__":
 
     results = []
     for path in [
-        'produced_data/dataset0',
-        'produced_data/dataset1',
-        'produced_data/dataset2',
-        'produced_data/dataset3',
-        'produced_data/dataset4',
-        'produced_data/dataset5',
-        'produced_data/dataset6',
-        'produced_data/dataset7',
-        'produced_data/dataset8',
-        'produced_data/dataset9',
+        'produced_data/datasets/dataset0',
+        'produced_data/datasets/dataset1',
+        'produced_data/datasets/dataset2',
+        'produced_data/datasets/dataset3',
+        'produced_data/datasets/dataset4',
+        'produced_data/datasets/dataset5',
+        'produced_data/datasets/dataset6',
+        'produced_data/datasets/dataset7',
+        'produced_data/datasets/dataset8',
+        'produced_data/datasets/dataset9',
     ]:
         results.append(run(path))
     accuracies = [res[0] for res in results]

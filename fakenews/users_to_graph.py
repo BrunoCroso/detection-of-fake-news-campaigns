@@ -139,6 +139,7 @@ def build_initial_graph(node_ids):
 
     length = len(list(os.scandir(user_followers_path)))
     pbar = tqdm(os.scandir(user_followers_path), total=length)
+    i=0
     for fentry in pbar:
         pbar.set_description('File: %s'%(fentry.path))
         if fentry.path.endswith(".json") and fentry.is_file():
@@ -147,6 +148,7 @@ def build_initial_graph(node_ids):
                     user_followers = json.load(json_file)
                 
                 except:
+                    i = i+1
                     continue
 
                 if not str(user_followers["user_id"]) in node_ids:
@@ -171,6 +173,8 @@ def build_initial_graph(node_ids):
                         g.vertex_attrs[v].update(**user)
 
                     g.add_edge(follower, user_followers["user_id"])
+
+    print(f"Number of jsons unloaded {i}")
 
     return g
 
