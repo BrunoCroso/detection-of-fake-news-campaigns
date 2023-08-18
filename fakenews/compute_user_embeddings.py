@@ -14,6 +14,8 @@ import embeddings
 import utils
 import numpy as np
 
+from transformers import AutoModel, AutoTokenizer
+
 from tqdm import tqdm
 
 
@@ -56,8 +58,8 @@ class UserProfiles:
         logging.info("Will output user embeddings to {}".format(self._user_embeddings_path))
         os.makedirs(self._user_embeddings_path, exist_ok=True)
 
-        glove_embeddings = utils.load_glove_embeddings(self._embeddings_file)
-        embedder = embeddings.UserEmbedder(glove_embeddings=glove_embeddings)
+        bertweet_model = AutoModel.from_pretrained("vinai/bertweet-base")
+        embedder = embeddings.UserEmbedder(bertweet_model=bertweet_model)
 
         length = len(list(os.scandir(self._user_profiles_path)))
         for fentry in tqdm(os.scandir(self._user_profiles_path), total=length):

@@ -14,6 +14,8 @@ import jgrapht
 import pandas as pd
 from tqdm import tqdm
 
+from transformers import AutoModel
+
 def strip_user_profile(user_profile:Dict, embedder: embeddings.UserEmbedder) -> Dict:
     if 'done' in user_profile and user_profile['done'] !=  'OK':
         description = ''
@@ -110,8 +112,8 @@ def build_initial_graph(node_ids):
     """
     node_ids = set(node_ids)
     logging.info("Creating graph from users")
-    glove_embeddings = utils.load_glove_embeddings(args.embeddings_file)
-    embedder = embeddings.UserEmbedder(glove_embeddings=glove_embeddings)
+    bertweet_model = AutoModel.from_pretrained("vinai/bertweet-base")
+    embedder = embeddings.UserEmbedder(bertweet_model=bertweet_model)
 
     user_profiles_path = "{}/user_profiles".format(args.input_dir)
     user_followers_path = "{}/user_followers".format(args.input_dir)
