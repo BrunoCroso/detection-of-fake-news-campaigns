@@ -35,25 +35,34 @@ class UserProfiles:
         self._not_in_lookup_embedding = not_in_lookup_embedding
 
 
-    def _strip_user_profile(self, user_profile, embedder):
-        if 'done' in user_profile and user_profile['done'] !=  'OK':
-            description = ''
-            user_profile = models.User(int(user_profile['user_id']))
-        else:
-            description = user_profile['description']
-            user_profile = models.User(user_profile['id'])
-        user_profile.description = description
+    def _strip_user_profile(self, user_profiles, embedder): #Modificado pra poder receber varios user profiles de uma vez
+        users = []
+        for user_profile in user_profiles:
+            if 'done' in user_profile and user_profile['done'] !=  'OK':
+                description = ''
+                user_profile = models.User(int(user_profile['user_id']))
+            else:
+                description = user_profile['description']
+                user_profile = models.User(user_profile['id'])
+            user_profile.description = description
 
-        user = {}
-        user['id'] = user_profile.id
-        graphsage_embedding = self._users_embeddings_lookup.get(str(user['id']), None)
-        if graphsage_embedding is None:
-            graphsage_embedding = self._not_in_lookup_embedding.tolist()
-        user["embedding"] = embedder.embed(user_profile).tolist() + graphsage_embedding
-        return user
+            user = {}
+            user['id'] = user_profile.id
+            graphsage_embedding = self._users_embeddings_lookup.get(str(user['id']), None)
+            if graphsage_embedding is None:
+                graphsage_embedding = self._not_in_lookup_embedding.tolist()
+
+        embeddings = embedder.embed(user_profiles)
+
+        index = 0
+        for user in users:
+          user["embedding"] = embeddings[index].tolist() + graphsage_embedding
+          index += 1
+
+        return users
 
 
-    def run(self):
+    def run(self): #Modificado pra poder usar varios user profiles de uma vez
         # Create output dir
         logging.info("Will output user embeddings to {}".format(self._user_embeddings_path))
         os.makedirs(self._user_embeddings_path, exist_ok=True)
@@ -62,16 +71,27 @@ class UserProfiles:
         embedder = embeddings.UserEmbedder(bertweet_model=bertweet_model)
 
         length = len(list(os.scandir(self._user_profiles_path)))
-        for fentry in tqdm(os.scandir(self._user_profiles_path), total=length):
-            if fentry.path.endswith(".json") and fentry.is_file():
-                with open(fentry.path) as json_file:
-                    user_profile = json.load(json_file)
-                    user = self._strip_user_profile(user_profile, embedder)
 
+        batch_size = 2  # Aqui defini o tamanho da leva como 5, mas pode ser mudado
+
+        batch_embeddings = []
+        user_profiles = []
+
+        for fentry in tqdm(os.scandir(self._user_profiles_path), total=length):
+            if len(user_profiles) < batch_size:
+                if fentry.path.endswith(".json") and fentry.is_file():
+                    with open(fentry.path) as json_file:
+                        user_profiles.append(json.load(json_file))
+
+            else:
+                batch_embeddings = self._strip_user_profile(user_profiles, embedder)
+              
+                for user in batch_embeddings:
                     outfile = "{}/{}.json".format(self._user_embeddings_path, user['id'])
                     with open(outfile, "w") as out_json_file:
                         logging.debug("Writing user embeddings to file {}".format(outfile))
                         json.dump(user, out_json_file)
+                batch_embeddings = []
 
 
 def run(args):

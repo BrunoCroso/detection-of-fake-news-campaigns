@@ -18,16 +18,17 @@ class UserEmbedder:
         else:
             self.__not_in_vocabulary_embedding = not_in_vocabulary_embedding
 
-    def embed(self, user: models.User):
+    def embed(self, users): #Tem que poder receber n users e retornar os respectivos n embeddings (recebe uma lista com users)
         embedding = np.array([])
         if self.__bertweet_model is not None:
+            descriptions = []
+            for user in users:
+              descriptions.append(user['description'])
 
-            tokens = torch.tensor([self.__tokenizer.encode(user.description, truncation=True)])
+            encoded_sentences = self.__tokenizer(descriptions, padding=True, truncation=True, return_tensors="pt")
             with torch.no_grad():
-                word_embeddings = self.__bertweet_model(tokens)[0][0]
+                outputs = self.__bertweet_model(**encoded_sentences)
 
-            if len(word_embeddings) != 0:
-                embedding = torch.mean(word_embeddings, axis=0).numpy()
-            else:
-                embedding = self.__not_in_vocabulary_embedding
-        return embedding
+            sentence_embeddings = outputs.last_hidden_state.mean(dim=1)
+
+        return sentence_embeddings
