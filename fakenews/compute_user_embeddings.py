@@ -97,7 +97,7 @@ class UserProfiles:
 
 def run(args):
 
-    logging.info("Loading dataset") # comment  ,
+    logging.info("Loading dataset") 
 
     user_profiles_path = "{}/user_profiles".format(args.input_dir)
     user_embeddings_path = "{}/user_embeddings".format(args.dataset_root)
