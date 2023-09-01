@@ -72,7 +72,7 @@ class UserProfiles:
 
         length = len(list(os.scandir(self._user_profiles_path)))
 
-        batch_size = 2  # Aqui defini o tamanho da leva como 5, mas pode ser mudado
+        batch_size = 1  # Aqui defini o tamanho da leva como 5, mas pode ser mudado
 
         batch_embeddings = []
         user_profiles = []
@@ -92,11 +92,12 @@ class UserProfiles:
                         logging.debug("Writing user embeddings to file {}".format(outfile))
                         json.dump(user, out_json_file)
                 batch_embeddings = []
+                user_profiles = []
 
 
 def run(args):
 
-    logging.info("Loading dataset")
+    logging.info("Loading dataset") # comment  ,
 
     user_profiles_path = "{}/user_profiles".format(args.input_dir)
     user_embeddings_path = "{}/user_embeddings".format(args.dataset_root)
