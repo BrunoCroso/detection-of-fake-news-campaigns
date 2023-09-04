@@ -18,12 +18,16 @@ class UserEmbedder:
         else:
             self.__not_in_vocabulary_embedding = not_in_vocabulary_embedding
 
+    
     def embed(self, users): #Tem que poder receber n users e retornar os respectivos n embeddings (recebe uma lista com users)
         embedding = np.array([])
         if self.__bertweet_model is not None:
             descriptions = []
             for user in users:
-              descriptions.append(user['description'])
+                if 'description' in user:
+                    descriptions.append(user['description'])
+                else:
+                    descriptions.append('')
 
             encoded_sentences = self.__tokenizer(descriptions, padding=True, truncation=True, return_tensors="pt")
             with torch.no_grad():

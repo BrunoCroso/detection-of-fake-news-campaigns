@@ -52,6 +52,8 @@ class UserProfiles:
             if graphsage_embedding is None:
                 graphsage_embedding = self._not_in_lookup_embedding.tolist()
 
+            users.append(user)
+
         embeddings = embedder.embed(user_profiles)
 
         index = 0
@@ -72,18 +74,22 @@ class UserProfiles:
 
         length = len(list(os.scandir(self._user_profiles_path)))
 
-        batch_size = 1  # Aqui defini o tamanho da leva como 5, mas pode ser mudado
+        batch_size = 2  # Aqui defini o tamanho da leva como 5, mas pode ser mudado
 
         batch_embeddings = []
         user_profiles = []
 
         for fentry in tqdm(os.scandir(self._user_profiles_path), total=length):
-            if len(user_profiles) < batch_size:
+            if len(user_profiles) < batch_size-1:
                 if fentry.path.endswith(".json") and fentry.is_file():
                     with open(fentry.path) as json_file:
                         user_profiles.append(json.load(json_file))
 
             else:
+                if fentry.path.endswith(".json") and fentry.is_file():
+                    with open(fentry.path) as json_file:
+                        user_profiles.append(json.load(json_file))
+
                 batch_embeddings = self._strip_user_profile(user_profiles, embedder)
               
                 for user in batch_embeddings:
