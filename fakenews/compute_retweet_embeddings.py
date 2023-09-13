@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
 #
-# Compute user profile embeddings.
+# Compute retweet embeddings.
 #
+
+# AINDA ESTÁ COMPLETO 
 
 import argparse
 import json
@@ -14,65 +16,73 @@ import embeddings
 import utils
 import numpy as np
 
+from transformers import AutoModel, AutoTokenizer
+
 from tqdm import tqdm
 
 
-class UserProfiles: 
+class UserRetweets: 
     def __init__(
         self,
         user_profiles_path,
-        user_embeddings_path,
+        retweets_embeddings_path,
         embeddings_file,
         users_embeddings_lookup,
         not_in_lookup_embedding
-    ):
+    ): #Acho que já está certa essa função
         self._user_profiles_path = user_profiles_path
-        self._user_embeddings_path = user_embeddings_path
+        self._retweets_embeddings_path = retweets_embeddings_path
         self._embeddings_file = embeddings_file
         self._users_embeddings_lookup = users_embeddings_lookup
         self._not_in_lookup_embedding = not_in_lookup_embedding
 
 
-    def _strip_user_profile(self, user_profile, user_embedder):
-        if 'done' in user_profile and user_profile['done'] !=  'OK':
-            description = ''
-            user_profile = models.User(int(user_profile['user_id']))
+    def _strip_retweet(self, retweet, embedder): #Acho que já está certa essa função
+        if 'done' in retweet and retweet['done'] !=  'OK':
+            text = ''
+            retweet_author = retweet['id']
+            retweet = models.Tweet(int(retweet['status']['id']))
         else:
-            description = user_profile['description']
-            user_profile = models.User(user_profile['id'])
-        user_profile.description = description
+            text = retweet['status']['text']
+            retweet_author = retweet['id']
+            retweet = models.Tweet(retweet['status']['id'])
+        retweet.text = text
+        retweet.user = retweet_author
+        
 
-        user = {}
-        user['id'] = user_profile.id
-        graphsage_embedding = self._users_embeddings_lookup.get(str(user['id']), None)
+        retweet_id_and_embedding = {}
+        retweet_id_and_embedding['rewteet_id'] = retweet.id
+        retweet_id_and_embedding['user'] = retweet.user
+        graphsage_embedding = self._users_embeddings_lookup.get(str(retweet_id_and_embedding['id']), None)
         if graphsage_embedding is None:
             graphsage_embedding = self._not_in_lookup_embedding.tolist()
-        user["embedding"] = user_embedder.embed(user_profile).tolist() + graphsage_embedding
-        return user
+        retweet_id_and_embedding["embedding"] = embedder.embed(retweet).tolist() + graphsage_embedding
+        return retweet_id_and_embedding
 
 
-    def run(self):
+    def run(self): #Acho que já está certa essa função
+                   #Ver de no futuro criar os embeddings dos usuarios e dos retweets ao mesmo tempo para só abrir cada arquivo 1 vez
         # Create output dir
-        logging.info("Will output user embeddings to {}".format(self._user_embeddings_path))
-        os.makedirs(self._user_embeddings_path, exist_ok=True)
+        logging.info("Will output user embeddings to {}".format(self._retweets_embeddings_path))
+        os.makedirs(self._retweets_embeddings_path, exist_ok=True)
 
-        glove_embeddings = utils.load_glove_embeddings(self._embeddings_file)
-        user_embedder = embeddings.UserEmbedder(glove_embeddings=glove_embeddings)
+        bertweet_model = AutoModel.from_pretrained("vinai/bertweet-base")
+        embedder = embeddings.RetweetContentEmbedder(bertweet_model=bertweet_model)
 
-        length = len(list(os.scandir(self._user_profiles_path)))
+        length = len(list(os.scandir(self._user_profiles_path))) # Retweets e user_profiles estão salvos em um mesmo json?
         for fentry in tqdm(os.scandir(self._user_profiles_path), total=length):
             if fentry.path.endswith(".json") and fentry.is_file():
                 with open(fentry.path) as json_file:
-                    user_profile = json.load(json_file)
-                    user = self._strip_user_profile(user_profile, user_embedder)
+                    retweet = json.load(json_file)
+                    retweet_id_and_embedding = self._strip_retweet(retweet, embedder)
 
-                    outfile = "{}/{}.json".format(self._user_embeddings_path, user['id'])
+                    outfile = "{}/{}.json".format(self._retweets_embeddings_path, retweet_id_and_embedding['rewteet_id'])
                     with open(outfile, "w") as out_json_file:
                         logging.debug("Writing user embeddings to file {}".format(outfile))
-                        json.dump(user, out_json_file)
+                        json.dump(retweet_id_and_embedding, out_json_file)
 
 
-def run(args):
+def run(args): # Ainda falta modificar!!!
 
     logging.info("Loading dataset")
 
