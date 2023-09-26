@@ -37,7 +37,7 @@ class UserRetweets:
         self._not_in_lookup_embedding = not_in_lookup_embedding
 
 
-    def _strip_retweet(self, retweet, embedder): #Acho que já está certa essa função
+    def _strip_retweet(self, retweet, embedder): # Acho que já está certa essa função
         if 'done' in retweet and retweet['done'] !=  'OK':
             text = ''
             retweet_author = retweet['id']
@@ -60,8 +60,8 @@ class UserRetweets:
         return retweet_id_and_embedding
 
 
-    def run(self): #Acho que já está certa essa função
-                   #Ver de no futuro criar os embeddings dos usuarios e dos retweets ao mesmo tempo para só abrir cada arquivo 1 vez
+    def run(self): # Acho que já está certa essa função
+                   # Ver de no futuro criar os embeddings dos usuarios e dos retweets ao mesmo tempo para só abrir cada arquivo 1 vez
         # Create output dir
         logging.info("Will output user embeddings to {}".format(self._retweets_embeddings_path))
         os.makedirs(self._retweets_embeddings_path, exist_ok=True)
@@ -82,20 +82,20 @@ class UserRetweets:
                         json.dump(retweet_id_and_embedding, out_json_file)
 
 
-def run(args): # Ainda falta modificar!!!
+def run(args): # Acho que já está certa essa função
 
     logging.info("Loading dataset")
 
     user_profiles_path = "{}/user_profiles".format(args.input_dir)
-    user_embeddings_path = "{}/user_embeddings".format(args.dataset_root)
+    retweets_embeddings_path = "{}/retweets_embeddings".format(args.dataset_root)
 
-    logging.info("Loading users embeddings graphsage lookup")
+    logging.info("Loading retweet embeddings using BERTweet")
     with open(os.path.join(args.dataset_root, "users_graphsage_embeddings_lookup.json")) as f:
         users_embeddings_lookup = json.load(f)
 
-    dataset = UserProfiles(
+    dataset = UserRetweets(
         user_profiles_path=user_profiles_path,
-        user_embeddings_path=user_embeddings_path,
+        retweets_embeddings_path=retweets_embeddings_path,
         embeddings_file=args.embeddings_file,
         users_embeddings_lookup=users_embeddings_lookup,
         not_in_lookup_embedding=np.zeros(len(list(users_embeddings_lookup.values())[0]))
@@ -104,7 +104,7 @@ def run(args): # Ainda falta modificar!!!
     dataset.run()
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": # As pastas e o resto do conteúdo são passados no terminal )no run.sh)
 
     logging.basicConfig(
         format="%(asctime)-15s %(name)-15s %(levelname)-8s %(message)s",
@@ -112,7 +112,7 @@ if __name__ == "__main__":
     )
 
     parser = argparse.ArgumentParser(
-        epilog="Example: python compute_user_embeddings.py"
+        epilog="Example: python compute_retweet_embeddings.py"
     )
     parser.add_argument(
         "--input-dir",
