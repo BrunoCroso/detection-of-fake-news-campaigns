@@ -40,12 +40,40 @@ class UserRetweets:
     def _strip_retweet(self, retweet, embedder): # Acho que já está certa essa função
         if 'done' in retweet and retweet['done'] !=  'OK':
             text = ''
-            retweet_author = retweet['id']
-            retweet = models.Tweet(int(retweet['status']['id']))
+            #retweet_author = retweet['id']
+            # Caso não tenha o id do usuário
+            try:
+                retweet_author = retweet['id']
+            except KeyError:
+                return None
+            
+            #retweet = models.Tweet(int(retweet['status']['id']))
+            # Caso não exista um retweet
+            try:
+                retweet = models.Tweet(int(retweet['status']['id']))
+            except KeyError:
+                return None
+
         else:
-            text = retweet['status']['text']
-            retweet_author = retweet['id']
-            retweet = models.Tweet(retweet['status']['id'])
+            #text = retweet['status']['text']
+            try:
+                text = retweet['status']['text']
+            except KeyError:
+                text = None
+            #retweet_author = retweet['id']
+            try:
+                retweet_author = retweet['id']
+            except KeyError:
+                return None
+
+            # Caso não exista um retweet
+            try:
+                retweet = models.Tweet(int(retweet['status']['id']))
+            except KeyError:
+                return None
+
+
+
         retweet.text = text
         retweet.user = retweet_author
         
@@ -53,7 +81,7 @@ class UserRetweets:
         retweet_id_and_embedding = {}
         retweet_id_and_embedding['rewteet_id'] = retweet.id
         retweet_id_and_embedding['user'] = retweet.user
-        graphsage_embedding = self._users_embeddings_lookup.get(str(retweet_id_and_embedding['id']), None)
+        graphsage_embedding = self._users_embeddings_lookup.get(str(retweet_id_and_embedding['rewteet_id']), None)
         if graphsage_embedding is None:
             graphsage_embedding = self._not_in_lookup_embedding.tolist()
         retweet_id_and_embedding["embedding"] = embedder.embed(retweet).tolist() + graphsage_embedding
@@ -75,11 +103,12 @@ class UserRetweets:
                 with open(fentry.path) as json_file:
                     retweet = json.load(json_file)
                     retweet_id_and_embedding = self._strip_retweet(retweet, embedder)
+                    if retweet_id_and_embedding is not None:
 
-                    outfile = "{}/{}.json".format(self._retweets_embeddings_path, retweet_id_and_embedding['rewteet_id'])
-                    with open(outfile, "w") as out_json_file:
-                        logging.debug("Writing user embeddings to file {}".format(outfile))
-                        json.dump(retweet_id_and_embedding, out_json_file)
+                        outfile = "{}/{}.json".format(self._retweets_embeddings_path, retweet_id_and_embedding['rewteet_id'])
+                        with open(outfile, "w") as out_json_file:
+                            logging.debug("Writing user embeddings to file {}".format(outfile))
+                            json.dump(retweet_id_and_embedding, out_json_file)
 
 
 def run(args): # Acho que já está certa essa função
