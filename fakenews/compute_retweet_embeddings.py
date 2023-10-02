@@ -105,7 +105,7 @@ class UserRetweets:
                     retweet_id_and_embedding = self._strip_retweet(retweet, embedder)
                     if retweet_id_and_embedding is not None:
 
-                        outfile = "{}/{}.json".format(self._retweets_embeddings_path, retweet_id_and_embedding['rewteet_id'])
+                        outfile = "{}/{}.json".format(self._retweets_embeddings_path, retweet_id_and_embedding['user'])
                         with open(outfile, "w") as out_json_file:
                             logging.debug("Writing user embeddings to file {}".format(outfile))
                             json.dump(retweet_id_and_embedding, out_json_file)
