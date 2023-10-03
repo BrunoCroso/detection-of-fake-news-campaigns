@@ -21,11 +21,11 @@ do
 done
 
 
-# echo Compressing data for local graphsage training...
+    # echo Compressing data for local graphsage training...
 
-# ./compress_data_for_graphsage_training.sh
+    # ./compress_data_for_graphsage_training.sh
 
-# read -p "Download the data locally, run the graphsage training, upload the results and then press [Enter] key to continue..."
+    # read -p "Download the data locally, run the graphsage training, upload the results and then press [Enter] key to continue..."
 
 echo "##### RUN train_graphsage#####"
 for i in {0..9}
@@ -40,6 +40,15 @@ do
   python compute_user_embeddings.py --input-dir ../raw_data --dataset-root produced_data/datasets/dataset$i --embeddings-file ../raw_data/glove.twitter.27B.100d.txt
 done
 
+
+echo "##### RUN compute_retweet_embeddings #####"
+for i in {0..9}
+do
+  echo "## dataset$i ##"
+  python compute_retweet_embeddings.py --input-dir ../raw_data --dataset-root produced_data/datasets/dataset$i --embeddings-file ../raw_data/glove.twitter.27B.100d.txt
+done
+
+
 echo "##### RUN add_trees_information #####"
 for i in {0..9}
 do
@@ -48,11 +57,11 @@ do
 done
 
 
-# echo Compressing data for local GAT training...
+    # echo Compressing data for local GAT training...
 
-# ./compress_data_for_gat_training.sh
+    # ./compress_data_for_gat_training.sh
 
-# echo Download again the data locally. You can now run the final training of the model on your computer...
+    # echo Download again the data locally. You can now run the final training of the model on your computer...
 
 echo "##### RUN train_trees #####"
 
