@@ -241,7 +241,8 @@ def run(args):
         tweet_path = fentry.path
         with open(tweet_path) as json_file:
             tweet_dict = json.load(json_file)
-            tree = create_tree(tweet_dict, min_retweets=8)
+            tree = create_tree(tweet_dict, min_retweets=8) # min_retweets original era 8. Vou alterar para ver se obtemos mais dados
+                                                           # Estavam sendo gerados 124 trees antes
             if tree is not None:
                 if count % 25 == 0: 
                     logging.info("{}".format(count))
