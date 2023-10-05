@@ -33,7 +33,8 @@ def tree_to_data(filename):
         as_list = []
         for key in ["delay", "protected", "following_count", "listed_count", "statuses_count", "followers_count", "favourites_count", "verified",]:
             as_list.append(float(node[key]))
-        as_list.extend(node["embedding"])
+        as_list.extend(node["user_embedding"])
+        as_list.extend(node["retweet_embedding"])
         vfeatures.append(as_list)
 
     vlabels = []
